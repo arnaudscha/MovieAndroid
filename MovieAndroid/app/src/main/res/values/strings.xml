@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MovieAndroid</string>
+    <string name="app_name">Meteo</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -90,4 +90,5 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
 </resources>
