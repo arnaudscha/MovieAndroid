@@ -7,4 +7,5 @@ package com.example.aschaal.movieandroid;
 public interface RefreshActivity {
     public void startRefreshing();
     public void stopRefreshing(String JSON);
+    public void onConnectionTaskEnd();
 }

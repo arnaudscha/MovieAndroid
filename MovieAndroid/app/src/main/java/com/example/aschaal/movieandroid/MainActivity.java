@@ -1,25 +1,22 @@
 package com.example.aschaal.movieandroid;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ListView;
+
+import com.example.aschaal.movieandroid.Models.ListMovies;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements RefreshActivity {
 
-    public static ArrayList<String> movies;
+    public static ListMovies movies;
+    public ArrayList<String> displayedArray;
 
     //Elements Graphiques.
     public ListView lv;
@@ -27,15 +24,15 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
     public Toolbar tb;
 
     //Task
-    public GetMoviesTask task;
+    public GetMoviesTask taskGetMovies;
+    public ConnectionTask taskConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        movies = new ArrayList<>();
-        task = new GetMoviesTask(this);
-
+        taskGetMovies = new GetMoviesTask(this);
+        displayedArray = new ArrayList<String>();
         //On recupere les composants graphiques.
         lv = (ListView) findViewById(R.id.content_main_list_view);
         swl = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -44,17 +41,18 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         swl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                task.execute();
+                taskGetMovies.execute();
             }
         });
         setSupportActionBar(tb);
         //On set un adapter qui permet de mettre en page touts les éléments de "movies".
         ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, movies);
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayedArray);
         //On peuple la listView avec l'adapter.
         lv.setAdapter(itemsAdapter);
 
-        //TODO ajouter l'asyncTask.
+        taskConnection = new ConnectionTask(this);
+        taskConnection.execute();
     }
 
     @Override
@@ -90,12 +88,32 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
 
     @Override
     public void stopRefreshing(String JSON) {
-        task = new GetMoviesTask(this);
+        taskGetMovies = new GetMoviesTask(this);
+        taskConnection = new ConnectionTask(this);
         if(swl != null)
             if(swl.isRefreshing())
                 swl.setRefreshing(false);
-        movies.clear();
-        movies.add(JSON);
-        ((ArrayAdapter)lv.getAdapter()).notifyDataSetChanged();
+        if(JSON != ""){
+            movies = ListMovies.CreateInstance(JSON);
+            if(movies != null){
+                if(movies.movies != null){
+                    displayedArray.clear();
+                    displayedArray.addAll(movies.getTitle());
+                }
+            }
+            ((ArrayAdapter)lv.getAdapter()).notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onConnectionTaskEnd() {
+        if(!taskConnection.isCancelled()){
+            taskConnection = new ConnectionTask(this);
+        }
+        if(ConnectionTask.token != null){
+            if(ConnectionTask.token.token != null){
+                //taskGetMovies.execute();
+            }
+        }
     }
 }
