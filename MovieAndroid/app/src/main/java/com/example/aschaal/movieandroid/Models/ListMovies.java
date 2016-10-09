@@ -19,6 +19,10 @@ public class ListMovies {
     @SerializedName("results")
     public ArrayList<PopularMovie> movies;
 
+    public ListMovies(){
+        page = 0;
+        movies = new ArrayList<PopularMovie>();
+    }
     public static ListMovies CreateInstance(String JSON){
         ListMovies result = null;
 
@@ -27,13 +31,15 @@ public class ListMovies {
         return result;
     }
 
-    public ArrayList<String> getTitle(){
-        ArrayList<String> result = new ArrayList<>();
+    public int getCount(){
+        return movies.size();
+    }
 
-        for(int i = 0; i < movies.size(); i++){
-            result.add(movies.get(i).title);
-        }
+    public PopularMovie getItem(int i){
+        return movies.get(i);
+    }
 
-        return result;
+    public int getIndex(PopularMovie pm){
+        return movies.indexOf(pm);
     }
 }

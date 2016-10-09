@@ -9,15 +9,16 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.aschaal.movieandroid.Adapter.PopularMovieAdapter;
 import com.example.aschaal.movieandroid.Models.ListMovies;
+import com.example.aschaal.movieandroid.Models.PopularMovie;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements RefreshActivity {
 
     public static ListMovies movies;
-    public ArrayList<String> displayedArray;
-
+    public PopularMovieAdapter adapter;
     //Elements Graphiques.
     public ListView lv;
     public SwipeRefreshLayout swl;
@@ -25,14 +26,17 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
 
     //Task
     public GetMoviesTask taskGetMovies;
+    public String currentName;
     public ConnectionTask taskConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        taskGetMovies = new GetMoviesTask(this);
-        displayedArray = new ArrayList<String>();
+
+        currentName = GetMoviesTask.POPULAR_NAME;
+        movies = new ListMovies();
+
         //On recupere les composants graphiques.
         lv = (ListView) findViewById(R.id.content_main_list_view);
         swl = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -41,15 +45,15 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         swl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                taskGetMovies.execute();
+                //if(!swl.isRefreshing())
+                getMovies(currentName);
             }
         });
         setSupportActionBar(tb);
         //On set un adapter qui permet de mettre en page touts les éléments de "movies".
-        ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayedArray);
+        adapter = new PopularMovieAdapter(this, movies);
         //On peuple la listView avec l'adapter.
-        lv.setAdapter(itemsAdapter);
+        lv.setAdapter(adapter);
 
         taskConnection = new ConnectionTask(this);
         taskConnection.execute();
@@ -70,11 +74,29 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_now_playing) {
+            tb.setTitle(R.string.action_Now_Playing);
+            currentName = GetMoviesTask.NOW_PLAYING_NAME;
+            //getMovies(GetMoviesTask.NOW_PLAYING_NAME);
             return true;
         }
-        if(id == R.id.action_refresh){
-            //TODO ajouter l'asyncTask.
+        if (id == R.id.action_popular) {
+            tb.setTitle(R.string.action_Popular);
+            currentName = GetMoviesTask.NOW_PLAYING_NAME;
+            //getMovies(GetMoviesTask.POPULAR_NAME);
+            return true;
+        }
+        if (id == R.id.action_top_played) {
+            tb.setTitle(R.string.action_Top_Played);
+            currentName = GetMoviesTask.NOW_PLAYING_NAME;
+            //getMovies(GetMoviesTask.TOP_RATED_NAME);
+            return true;
+        }
+        if (id == R.id.action_upcoming) {
+            tb.setTitle(R.string.action_UpComing);
+            currentName = GetMoviesTask.NOW_PLAYING_NAME;
+            //getMovies(GetMoviesTask.UPCOMING_NAME);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -88,19 +110,15 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
 
     @Override
     public void stopRefreshing(String JSON) {
-        taskGetMovies = new GetMoviesTask(this);
+        taskGetMovies = new GetMoviesTask(this, currentName);
         taskConnection = new ConnectionTask(this);
         if(swl != null)
             if(swl.isRefreshing())
                 swl.setRefreshing(false);
         if(JSON != ""){
             movies = ListMovies.CreateInstance(JSON);
-            if(movies != null){
-                if(movies.movies != null){
-                    displayedArray.clear();
-                    displayedArray.addAll(movies.getTitle());
-                }
-            }
+            adapter = new PopularMovieAdapter(this, movies);
+            lv.setAdapter(adapter);
             ((ArrayAdapter)lv.getAdapter()).notifyDataSetChanged();
         }
     }
@@ -115,5 +133,16 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
                 //taskGetMovies.execute();
             }
         }
+    }
+
+    public void getMovies(String name){
+        currentName = name;
+        if(taskGetMovies != null){
+            if(!taskGetMovies.isCancelled()){
+                taskGetMovies.cancel(true);
+            }
+        }
+        taskGetMovies = new GetMoviesTask(this, currentName);
+        taskGetMovies.execute();
     }
 }

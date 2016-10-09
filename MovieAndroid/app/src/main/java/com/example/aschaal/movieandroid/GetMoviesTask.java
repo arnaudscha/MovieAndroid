@@ -17,14 +17,16 @@ import java.net.URL;
 
 public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String API_KEY = "api_key=d36e0292d838026d4bbf02fae3dfad22";
-    public static final String URL_BASE = "https://api.themoviedb.org/3/movie/";
     public static final String POPULAR_NAME = "popular";
-    public static final String LANGUAGE_FR = "language=fr-FR";
+    public static final String NOW_PLAYING_NAME = "now_playing";
+    public static final String UPCOMING_NAME = "upcoming";
+    public static final String TOP_RATED_NAME = "top_rated";
+    public String demands;
     public RefreshActivity currentActivity;
     public String response;
-    public GetMoviesTask(RefreshActivity activity){
-        currentActivity = activity;
+    public GetMoviesTask(RefreshActivity activity, String demands){
+        this.currentActivity = activity;
+        this.demands = demands;
     }
     @Override
     protected Void doInBackground(Void... params) {
@@ -45,7 +47,9 @@ public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are available at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
-            URL url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=d36e0292d838026d4bbf02fae3dfad22&language=fr-FR%27");
+            URL url = new URL("https://api.themoviedb.org/3/movie/" +
+                    demands +
+                    "?api_key=d36e0292d838026d4bbf02fae3dfad22&language=fr-FR%27");
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
