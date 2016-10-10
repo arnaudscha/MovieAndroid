@@ -1,10 +1,11 @@
-package com.example.aschaal.movieandroid;
+package com.example.aschaal.movieandroid.Tasks;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.aschaal.movieandroid.Models.Token;
+import com.example.aschaal.movieandroid.RefreshActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;

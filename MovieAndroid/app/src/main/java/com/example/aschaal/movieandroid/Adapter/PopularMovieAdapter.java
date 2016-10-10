@@ -1,14 +1,12 @@
 package com.example.aschaal.movieandroid.Adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.aschaal.movieandroid.Models.ListMovies;
@@ -35,7 +33,6 @@ public class PopularMovieAdapter extends ArrayAdapter {
         this.datas = datas;
     }
 
-    @NonNull
     @Override
     public Context getContext() {
         return context;
@@ -66,6 +63,7 @@ public class PopularMovieAdapter extends ArrayAdapter {
             holder = new ViewRefresh(context);
             holder.textView = (TextView) convertView.findViewById(R.id.movie_layout_title);
             holder.imageView = (ImageView) convertView.findViewById(R.id.movie_layout_img);
+            holder.textViewRounded = (TextView) convertView.findViewById(R.id.movie_layout_circular_textView);
             holder.imageView.setImageDrawable(context.getDrawable(R.drawable.noposter));
             convertView.setTag(holder);
         }
@@ -76,6 +74,7 @@ public class PopularMovieAdapter extends ArrayAdapter {
 
         PopularMovie pm = (PopularMovie) getItem(position);
         if(pm != null){
+            holder.textViewRounded.setText(pm.voteAverage);
             holder.textView.setText(pm.title);
             GetImageTask git = new GetImageTask((RefreshingView)holder, pm.posterPath);
             git.execute();

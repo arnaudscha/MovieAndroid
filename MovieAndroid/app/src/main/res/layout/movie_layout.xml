@@ -28,5 +28,19 @@
                 android:layout_height="40dp"
                 android:paddingLeft="20dp"/>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/movie_layout_circular_textView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_textview"
+            android:textColor="@color/White"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="21dp" />
     </RelativeLayout>
 </LinearLayout>

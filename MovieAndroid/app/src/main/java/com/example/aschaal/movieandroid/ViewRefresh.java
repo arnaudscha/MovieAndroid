@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.aschaal.movieandroid.Tasks.RefreshingView;
@@ -15,9 +16,10 @@ import com.example.aschaal.movieandroid.Tasks.RefreshingView;
 public class ViewRefresh extends View implements RefreshingView {
     public ImageView imageView;
     public TextView textView;
-
+    public TextView textViewRounded;
     public ViewRefresh(Context context) {
         super(context);
+
     }
 
     @Override
