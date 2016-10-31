@@ -27,6 +27,7 @@ public class GetMovieTask extends AsyncTask<Void, Void, Void> {
         this.currentActivity = activity;
         this.id = id;
     }
+
     @Override
     protected Void doInBackground(Void... params) {
         ((Activity)currentActivity).runOnUiThread(new Runnable() {
@@ -101,5 +102,12 @@ public class GetMovieTask extends AsyncTask<Void, Void, Void> {
             }
         });
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+
+        currentActivity.onConnectionTaskEnd();
     }
 }

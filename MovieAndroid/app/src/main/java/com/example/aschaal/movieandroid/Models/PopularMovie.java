@@ -53,9 +53,8 @@ public class PopularMovie {
     public String voteAverage;
 
     public static PopularMovie CreateInstance(String JSON){
-        String mJsonString = "...";
         JsonParser parser = new JsonParser();
-        JsonElement mJson =  parser.parse(mJsonString);
+        JsonElement mJson =  parser.parse(JSON);
 
         return new Gson().fromJson(mJson, PopularMovie.class);
     }
