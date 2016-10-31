@@ -17,14 +17,18 @@ public class ViewRefresh extends View implements RefreshingView {
     public ImageView imageView;
     public TextView textView;
     public TextView textViewRounded;
+    public String urlImage;
+    public int id;
+
     public ViewRefresh(Context context) {
         super(context);
-
+        this.urlImage = urlImage;
     }
 
     @Override
-    public void onTaskEnd(Drawable d) {
+    public void onTaskEnd(Drawable d, String url) {
         if(imageView != null)
+            if(url == urlImage)
             imageView.setImageDrawable(d);
     }
 }

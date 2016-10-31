@@ -16,7 +16,7 @@ public class PopularMovie {
     @SerializedName("poster_path")
     public String posterPath;
 
-    @SerializedName("adutl")
+    @SerializedName("adult")
     public boolean adult;
 
     @SerializedName("overview")

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.aschaal.movieandroid.Models.Token;
 import com.example.aschaal.movieandroid.RefreshActivity;
 
 import java.io.BufferedReader;
@@ -15,19 +14,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by aschaal on 07/10/2016.
+ * Created by aschaal on 31/10/2016.
  */
 
-public class ConnectionTask extends AsyncTask<Void, Void, Void> {
+public class GetMovieTask extends AsyncTask<Void, Void, Void> {
+
     public RefreshActivity currentActivity;
     public String response;
-    public static Token token;
-    public static Boolean isConnected = false;
+    public int id;
 
-    public ConnectionTask(RefreshActivity activity){
-        currentActivity = activity;
+    public GetMovieTask(RefreshActivity activity, int id){
+        this.currentActivity = activity;
+        this.id = id;
     }
-
     @Override
     protected Void doInBackground(Void... params) {
         ((Activity)currentActivity).runOnUiThread(new Runnable() {
@@ -37,7 +36,6 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> {
             }
         });
 
-        isConnected = false;
         currentActivity.startRefreshing();
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -48,7 +46,9 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> {
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are available at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
-            URL url = new URL("https://api.themoviedb.org/3/authentication/token/new?api_key=d36e0292d838026d4bbf02fae3dfad22");
+            URL url = new URL("https://api.themoviedb.org/3/movie/" +
+                    id +
+                    "?api_key=d36e0292d838026d4bbf02fae3dfad22&language=fr-FR%27");
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -97,10 +97,7 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> {
         ((Activity)currentActivity).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                currentActivity.stopRefreshing("");
-                token = Token.CreateInstance(response);
-                isConnected = true;
-                currentActivity.onConnectionTaskEnd();
+                currentActivity.stopRefreshing(response);
             }
         });
         return null;

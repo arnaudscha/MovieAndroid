@@ -7,5 +7,5 @@ import android.graphics.drawable.Drawable;
  */
 
 public interface RefreshingView {
-    public void onTaskEnd(Drawable d);
+    public void onTaskEnd(Drawable d, String url);
 }

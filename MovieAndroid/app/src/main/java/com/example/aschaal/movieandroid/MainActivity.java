@@ -1,13 +1,11 @@
 package com.example.aschaal.movieandroid;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -45,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         lv = (ListView) findViewById(R.id.content_main_list_view);
         swl = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         tb = (Toolbar) findViewById(R.id.toolbar);
-        iv = (ImageView) findViewById(R.id.image_toolBar);
 
         swl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -60,22 +57,14 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         //On set un adapter qui permet de mettre en page touts les éléments de "movies".
         adapter = new PopularMovieAdapter(this, movies);
         //On peuple la listView avec l'adapter.
-        lv.setAdapter(adapter);
-        iv.setImageDrawable(getDrawable(R.drawable.popular_tab));
 
-        lv.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                int diffY = scrollY - oldScrollY;
-                if(diffY > 0){
-                    //ici on monte.
-                }else{
-                    //ici on descend.
-                }
-            }
-        });
-        taskConnection = new ConnectionTask(this);
-        taskConnection.execute();
+        if(!taskConnection.isConnected){
+            taskConnection = new ConnectionTask(this);
+            taskConnection.execute();
+        }
+        else{
+            getMovies(currentName);
+        }
     }
 
     @Override
@@ -96,28 +85,24 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         if (id == R.id.action_now_playing) {
             tb.setTitle(R.string.action_Now_Playing);
             currentName = GetMoviesTask.NOW_PLAYING_NAME;
-            iv.setImageDrawable(getDrawable(R.drawable.nowplaying_tab));
             //getMovies(GetMoviesTask.NOW_PLAYING_NAME);
             return true;
         }
         if (id == R.id.action_popular) {
             tb.setTitle(R.string.action_Popular);
             currentName = GetMoviesTask.POPULAR_NAME;
-            iv.setImageDrawable(getDrawable(R.drawable.popular_tab));
             //getMovies(GetMoviesTask.POPULAR_NAME);
             return true;
         }
         if (id == R.id.action_top_played) {
             tb.setTitle(R.string.action_Top_Played);
             currentName = GetMoviesTask.TOP_RATED_NAME;
-            iv.setImageDrawable(getDrawable(R.drawable.toprated_tab));
             //getMovies(GetMoviesTask.TOP_RATED_NAME);
             return true;
         }
         if (id == R.id.action_upcoming) {
             tb.setTitle(R.string.action_UpComing);
             currentName = GetMoviesTask.UPCOMING_NAME;
-            iv.setImageDrawable(getDrawable(R.drawable.upcoming_tab));
             //getMovies(GetMoviesTask.UPCOMING_NAME);
             return true;
         }

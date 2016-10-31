@@ -1,6 +1,7 @@
 package com.example.aschaal.movieandroid.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.aschaal.movieandroid.Models.ListMovies;
 import com.example.aschaal.movieandroid.Models.PopularMovie;
+import com.example.aschaal.movieandroid.MovieActivity;
 import com.example.aschaal.movieandroid.R;
 import com.example.aschaal.movieandroid.Tasks.GetImageTask;
 import com.example.aschaal.movieandroid.Tasks.RefreshingView;
@@ -76,6 +78,21 @@ public class PopularMovieAdapter extends ArrayAdapter {
         if(pm != null){
             holder.textViewRounded.setText(pm.voteAverage);
             holder.textView.setText(pm.title);
+            holder.urlImage = pm.posterPath;
+            holder.id = pm.id;
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MovieActivity.class);
+
+                    intent.putExtra("title", holder.textView.getText());
+                    intent.putExtra("idmovie", holder.id);
+
+                    context.startActivity(intent);
+                }
+            });
+
             GetImageTask git = new GetImageTask((RefreshingView)holder, pm.posterPath);
             git.execute();
         }
