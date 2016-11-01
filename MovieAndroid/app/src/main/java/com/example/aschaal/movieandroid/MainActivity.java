@@ -1,7 +1,10 @@
 package com.example.aschaal.movieandroid;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.aschaal.movieandroid.Adapter.PopularMovieAdapter;
 import com.example.aschaal.movieandroid.Models.ListMovies;
@@ -49,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
             @Override
             public void onRefresh() {
                 //if(!swl.isRefreshing())
-                getMovies(currentName);
+                getMovies();
             }
         });
 
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
             taskConnection.execute();
         }
         else{
-            getMovies(currentName);
+            getMovies();
         }
     }
 
@@ -83,29 +87,8 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_now_playing) {
-            tb.setTitle(R.string.action_Now_Playing);
-            currentName = GetMoviesTask.NOW_PLAYING_NAME;
-            //getMovies(GetMoviesTask.NOW_PLAYING_NAME);
-            return true;
-        }
-        if (id == R.id.action_popular) {
-            tb.setTitle(R.string.action_Popular);
-            currentName = GetMoviesTask.POPULAR_NAME;
-            //getMovies(GetMoviesTask.POPULAR_NAME);
-            return true;
-        }
-        if (id == R.id.action_top_played) {
-            tb.setTitle(R.string.action_Top_Played);
-            currentName = GetMoviesTask.TOP_RATED_NAME;
-            //getMovies(GetMoviesTask.TOP_RATED_NAME);
-            return true;
-        }
-        if (id == R.id.action_upcoming) {
-            tb.setTitle(R.string.action_UpComing);
-            currentName = GetMoviesTask.UPCOMING_NAME;
-            //getMovies(GetMoviesTask.UPCOMING_NAME);
-            return true;
+        if(id == R.id.action_settings){
+            startActivity(new Intent(this, SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -149,7 +132,10 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
 
     }
 
-    public void getMovies(String name){
+    public void getMovies(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String name = prefs.getString(getString(R.string.pref_title_add_friends_to_messages), "");
+
         currentName = name;
         if(taskGetMovies != null){
             if(!taskGetMovies.isCancelled()){
@@ -158,5 +144,7 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         }
         taskGetMovies = new GetMoviesTask(this, currentName);
         taskGetMovies.execute();
+
+        Toast.makeText(this, "Selected category : " + currentName, Toast.LENGTH_SHORT).show();
     }
 }
