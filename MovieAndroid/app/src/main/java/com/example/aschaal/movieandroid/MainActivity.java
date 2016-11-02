@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.aschaal.movieandroid.Adapter.PopularMovieAdapter;
 import com.example.aschaal.movieandroid.Models.ListMovies;
@@ -133,10 +132,10 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
     }
 
     public void getMovies(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String name = prefs.getString(getString(R.string.pref_title_add_friends_to_messages), "");
+        SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
 
-        currentName = name;
+        currentName = Utility.convertPref(preferences.getString("maintPageCategory", "1"));
         if(taskGetMovies != null){
             if(!taskGetMovies.isCancelled()){
                 taskGetMovies.cancel(true);
@@ -144,7 +143,5 @@ public class MainActivity extends AppCompatActivity implements RefreshActivity {
         }
         taskGetMovies = new GetMoviesTask(this, currentName);
         taskGetMovies.execute();
-
-        Toast.makeText(this, "Selected category : " + currentName, Toast.LENGTH_SHORT).show();
     }
 }
