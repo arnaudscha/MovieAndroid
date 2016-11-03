@@ -2,6 +2,8 @@ package com.example.aschaal.movieandroid;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.example.aschaal.movieandroid.Datas.Contrat;
 
@@ -53,5 +55,12 @@ public class Outils {
 
     public static String buildImageUrl(int width, String fileName) {
         return "http://image.tmdb.org/t/p/w" + Integer.toString(width) + fileName;
+    }
+
+    public static int getAverageColor(Bitmap b) {
+        Bitmap newBitmap = Bitmap.createScaledBitmap(b, 1, 1, true);
+        final int color = newBitmap.getPixel(0, 0);
+        newBitmap.recycle();
+        return color;
     }
 }

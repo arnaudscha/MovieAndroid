@@ -6,9 +6,14 @@ package com.example.aschaal.movieandroid;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.CardView;
@@ -28,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.aschaal.movieandroid.Adapter.BandeAnnonceAdapter;
 import com.example.aschaal.movieandroid.Adapter.CritiqueAdapter;
 import com.example.aschaal.movieandroid.Datas.Contrat;
@@ -85,10 +92,10 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
     }
 
-    @Override
+  /*  @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (film != null) {
             inflater.inflate(R.menu.menu_detail, menu);
@@ -196,7 +203,7 @@ public class DetailActivityFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -286,12 +293,27 @@ public class DetailActivityFragment extends Fragment {
         if(film != null){
 
             String image_url = Outils.buildImageUrl(342, film.getImage2());
-            ImageView iv = (ImageView) da.findViewById(R.id.expandedImage);
-            Glide.with(this).load(image_url).into(iv);
+            Glide.with(this).load(image_url).asBitmap().into(target);
         }
         da.setSupportActionBar(actionBar);
         da.getSupportActionBar().setTitle(film.getTitle());
+        da.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        da.getSupportActionBar().setDisplayShowHomeEnabled(true);
         //da.getSupportActionBar()
         //da.getSupportActionBar().setHideOnContentScrollEnabled(true);
     }
+
+    private SimpleTarget target = new SimpleTarget<Bitmap>() {
+        @Override
+        public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+            int c = Outils.getAverageColor(resource);
+
+            ImageView iv = (ImageView) getActivity().findViewById(R.id.expandedImage);
+            CollapsingToolbarLayout ctl = (CollapsingToolbarLayout) getActivity()
+                    .findViewById(R.id.collapsing_toolbar);
+            
+            ctl.setBackground(new ColorDrawable(c));
+            iv.setImageBitmap(resource);
+        }
+    };
 }

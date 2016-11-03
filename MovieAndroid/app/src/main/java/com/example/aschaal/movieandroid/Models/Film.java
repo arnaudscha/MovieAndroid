@@ -16,12 +16,12 @@ import org.json.JSONObject;
 public class Film implements Parcelable {
 
     private int id;
-    private String title; // original_title
-    private String image; // poster_path
-    private String image2; // backdrop_path
+    private String title;
+    private String image;
+    private String image2;
     private String overview;
-    private int rating; // vote_average
-    private String date; // release_date
+    private int rating;
+    private String date;
 
     public Film() {
 
