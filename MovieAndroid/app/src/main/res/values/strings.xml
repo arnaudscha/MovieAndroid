@@ -1,25 +1,20 @@
 <resources>
     <string name="app_name">Movies</string>
-
-    <string name="action_settings">Settings</string>
-
-    <string name="pref_categories_Popular">Popular</string>
-    <string name="pref_categories_Now_Playing">Now playing</string>
-    <string name="pref_categories_Top_Played">Top Played</string>
-    <string name="pref_categories_UpComing">Upcoming</string>
-    <string name="pref_user_main_category">Main page category</string>
-    <string name="pref_user_main_category_summary">Category</string>
-
-    <string-array name="mainPageCategory">
-        <item name="upcoming">Up Coming</item>
-        <item name="latest">Latest</item>
-        <item name="popular">Popular</item>
-        <item name="toprated">Top Rated</item>
-    </string-array>
-    <string-array name="mainPageCategoryValues">
-        <item name="upcomingValues">1</item>
-        <item name="latestValues">2</item>
-        <item name="popularValues">3</item>
-        <item name="topratedValues">4</item>
-    </string-array>
+    <string name="action_sort_by">category</string>
+    <string name="action_sort_by_popularity">Populaire</string>
+    <string name="action_sort_by_rating">Top votes</string>
+    <string name="title_activity_detail">Details</string>
+    <string name="rating">Votes</string>
+    <string name="release_date">Sortie</string>
+    <string name="details">Details</string>
+    <string name="trailers">Videos</string>
+    <string name="reviews">Critiques</string>
+    <string name="resume">Synopsis</string>
+    <string name="action_favorite">Favoris</string>
+    <string name="content_authority">com.example.aschaal.movieandroid</string>
+    <string name="removed_from_favorites">Supprimé des favoris</string>
+    <string name="added_to_favorites">Ajouter aux favoris</string>
+    <string name="action_sort_by_favorite">Favoris</string>
+    <string name="action_share">Partager</string>
+    <string name="tmdb_api_key">d36e0292d838026d4bbf02fae3dfad22</string>
 </resources>

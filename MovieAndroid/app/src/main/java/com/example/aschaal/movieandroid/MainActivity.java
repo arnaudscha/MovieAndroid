@@ -1,147 +1,59 @@
 package com.example.aschaal.movieandroid;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 
-import com.example.aschaal.movieandroid.Adapter.PopularMovieAdapter;
-import com.example.aschaal.movieandroid.Models.ListMovies;
-import com.example.aschaal.movieandroid.Tasks.ConnectionTask;
-import com.example.aschaal.movieandroid.Tasks.GetMoviesTask;
+import com.example.aschaal.movieandroid.Models.Film;
 
-public class MainActivity extends AppCompatActivity implements RefreshActivity {
+/**
+ * Created by aschaal on 02/11/2016.
+ */
 
-    public static ListMovies movies;
-    public PopularMovieAdapter adapter;
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
 
-    //Elements Graphiques.
-    public ListView lv;
-    public SwipeRefreshLayout swl;
-    public Toolbar tb;
-    public ImageView iv;
-
-    //Task
-    public GetMoviesTask taskGetMovies;
-    public String currentName;
-    public ConnectionTask taskConnection;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        currentName = GetMoviesTask.POPULAR_NAME;
-        movies = new ListMovies();
-
-        //On recupere les composants graphiques.
-        lv = (ListView) findViewById(R.id.content_main_list_view);
-        swl = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        tb = (Toolbar) findViewById(R.id.toolbar);
-
-        swl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //if(!swl.isRefreshing())
-                getMovies();
+        if (findViewById(R.id.movie_detail_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new DetailActivityFragment(),
+                                DetailActivityFragment.TAG)
+                        .commit();
             }
-        });
-
-        setSupportActionBar(tb);
-        tb.setTitle(currentName);
-        //On set un adapter qui permet de mettre en page touts les éléments de "movies".
-        adapter = new PopularMovieAdapter(this, movies);
-        //On peuple la listView avec l'adapter.
-
-        if(!taskConnection.isConnected){
-            taskConnection = new ConnectionTask(this);
-            taskConnection.execute();
+        } else {
+            mTwoPane = false;
         }
-        else{
-            getMovies();
-        }
+        Toolbar actionBar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle(
+                getString(R.string.app_name)
+        );
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    public void onItemSelected(Film movie) {
+        if (mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE, movie);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+            DetailActivityFragment fragment = new DetailActivityFragment();
+            fragment.setArguments(arguments);
 
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.action_settings){
-            startActivity(new Intent(this, SettingsActivity.class));
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, fragment, DetailActivityFragment.TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .putExtra(DetailActivityFragment.DETAIL_MOVIE, movie);
+            startActivity(intent);
         }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void startRefreshing() {
-        if(swl != null)
-            if(!swl.isRefreshing())
-                swl.setRefreshing(true);
-    }
-
-    @Override
-    public void stopRefreshing(String JSON) {
-        taskGetMovies = new GetMoviesTask(this, currentName);
-        taskConnection = new ConnectionTask(this);
-        if(swl != null)
-            if(swl.isRefreshing())
-                swl.setRefreshing(false);
-        if(JSON != ""){
-            movies = ListMovies.CreateInstance(JSON);
-            adapter = new PopularMovieAdapter(this, movies);
-            lv.setAdapter(adapter);
-            ((ArrayAdapter)lv.getAdapter()).notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onConnectionTaskEnd() {
-        if(!taskConnection.isCancelled()){
-            taskConnection = new ConnectionTask(this);
-        }
-        if(ConnectionTask.token != null){
-            if(ConnectionTask.token.token != null){
-                //taskGetMovies.execute();
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionTaskEnd(Drawable d) {
-
-    }
-
-    public void getMovies(){
-        SharedPreferences preferences = PreferenceManager
-                .getDefaultSharedPreferences(this);
-
-        currentName = Utility.convertPref(preferences.getString("maintPageCategory", "1"));
-        if(taskGetMovies != null){
-            if(!taskGetMovies.isCancelled()){
-                taskGetMovies.cancel(true);
-            }
-        }
-        taskGetMovies = new GetMoviesTask(this, currentName);
-        taskGetMovies.execute();
     }
 }
