@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -58,8 +60,6 @@ public class DetailActivityFragment extends Fragment {
     private Film film;
     public Film getFilm() { return film; }
 
-    private ImageView imageView;
-
     private TextView resume;
     private TextView dateView;
     private TextView votes;
@@ -79,6 +79,9 @@ public class DetailActivityFragment extends Fragment {
 
     private ScrollView layout;
 
+    private Button addFav;
+    private Button share;
+
     private ShareActionProvider sap;
     public ShareActionProvider getSap() { return sap; }
 
@@ -95,115 +98,6 @@ public class DetailActivityFragment extends Fragment {
         //setHasOptionsMenu(true);
     }
 
-  /*  @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (film != null) {
-            inflater.inflate(R.menu.menu_detail, menu);
-
-            final MenuItem action_favorite = menu.findItem(R.id.action_favorite);
-            MenuItem action_share = menu.findItem(R.id.action_share);
-
-            new AsyncTask<Void, Void, Integer>() {
-                @Override
-                protected Integer doInBackground(Void... params) {
-                    //return Outils.isFavorited(getActivity(), film.getId());
-                    return 0;
-                }
-
-                @Override
-                protected void onPostExecute(Integer isFavorited) {
-                    action_favorite.setIcon(isFavorited == 1 ?
-                            android.R.drawable.star_on :
-                            android.R.drawable.star_off);
-                }
-            }.execute();
-
-            sap = (ShareActionProvider) MenuItemCompat.getActionProvider(action_share);
-
-            if (bandeAnnonce != null) {
-                sap.setShareIntent(BandeAnnonceTask.createShareMovieIntent(
-                        film,
-                        bandeAnnonce
-                ));
-            }
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_favorite:
-                if (film != null) {
-                    new AsyncTask<Void, Void, Integer>() {
-
-                        @Override
-                        protected Integer doInBackground(Void... params) {
-                            return Outils.isFavorited(getActivity(), film.getId());
-                        }
-
-                        @Override
-                        protected void onPostExecute(Integer isFavorited) {
-                            // if it is in favorites
-                            if (isFavorited == 1) {
-                                // delete from favorites
-                                new AsyncTask<Void, Void, Integer>() {
-                                    @Override
-                                    protected Integer doInBackground(Void... params) {
-                                        return getActivity().getContentResolver().delete(
-                                                Contrat.MovieEntry.CONTENT_URI,
-                                                Contrat.MovieEntry.COLUMN_MOVIE_ID + " = ?",
-                                                new String[]{Integer.toString(film.getId())}
-                                        );
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Integer rowsDeleted) {
-                                        item.setIcon(android.R.drawable.star_off);
-
-                                        Toast.makeText(getActivity(), getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT)
-                                        .show();
-                                    }
-                                }.execute();
-                            }
-                            // if it is not in favorites
-                            else {
-                                // add to favorites
-                                new AsyncTask<Void, Void, Uri>() {
-                                    @Override
-                                    protected Uri doInBackground(Void... params) {
-                                        ContentValues values = new ContentValues();
-
-                                        values.put(Contrat.MovieEntry.COLUMN_MOVIE_ID, film.getId());
-                                        values.put(Contrat.MovieEntry.COLUMN_TITLE, film.getTitle());
-                                        values.put(Contrat.MovieEntry.COLUMN_IMAGE, film.getImage());
-                                        values.put(Contrat.MovieEntry.COLUMN_IMAGE2, film.getImage2());
-                                        values.put(Contrat.MovieEntry.COLUMN_OVERVIEW, film.getOverview());
-                                        values.put(Contrat.MovieEntry.COLUMN_RATING, film.getRating());
-                                        values.put(Contrat.MovieEntry.COLUMN_DATE, film.getDate());
-
-                                        return getActivity().getContentResolver().insert(Contrat.MovieEntry.CONTENT_URI,
-                                                values);
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Uri returnUri) {
-                                        item.setIcon(android.R.drawable.star_on);
-
-                                        Toast.makeText(getActivity(), getString(R.string.added_to_favorites), Toast.LENGTH_SHORT)
-                                        .show();
-                                    }
-                                }.execute();
-                            }
-                        }
-                    }.execute();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -222,7 +116,8 @@ public class DetailActivityFragment extends Fragment {
             layout.setVisibility(View.INVISIBLE);
         }
 
-        imageView = (ImageView) rootView.findViewById(R.id.detail_image);
+        addFav = (Button) rootView.findViewById(R.id.addFav);
+        share = (Button) rootView.findViewById(R.id.share);
 
         resume = (TextView) rootView.findViewById(R.id.detail_overview);
         dateView = (TextView) rootView.findViewById(R.id.detail_date);
@@ -248,14 +143,14 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
+        final ImageView iv = (ImageView) rootView.findViewById(R.id.detail_image);
+
         critiqueAdapter = new CritiqueAdapter(getActivity(), new ArrayList<Critique>());
         critiques.setAdapter(critiqueAdapter);
 
         if (film != null) {
-
-            String image_url = Outils.buildImageUrl(342, film.getImage());
-
-            Glide.with(this).load(image_url).into(imageView);
+            String image_url = Outils.buildImageUrl(342, film.getImage2());
+            Glide.with(this).load(image_url).into(iv);
 
             resume.setText(film.getOverview());
 
@@ -273,6 +168,18 @@ public class DetailActivityFragment extends Fragment {
             votes.setText(Integer.toString(film.getRating()));
         }
 
+        NestedScrollView sv = (NestedScrollView) activity.findViewById(R.id.scrollView_detail);
+        sv.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                float diff = (float)scrollY - (float)oldScrollY;
+                float h = (float) iv.getHeight();
+                float a = iv.getAlpha();
+                iv.setAlpha(
+                    a - diff / h
+                );
+            }
+        });
         if(activity != null){
             initActionBar(activity);
         }
@@ -292,15 +199,13 @@ public class DetailActivityFragment extends Fragment {
         Toolbar actionBar = (Toolbar) da.findViewById(R.id.toolbar);
         if(film != null){
 
-            String image_url = Outils.buildImageUrl(342, film.getImage2());
+            String image_url = Outils.buildImageUrl(342, film.getImage());
             Glide.with(this).load(image_url).asBitmap().into(target);
         }
         da.setSupportActionBar(actionBar);
         da.getSupportActionBar().setTitle(film.getTitle());
         da.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         da.getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //da.getSupportActionBar()
-        //da.getSupportActionBar().setHideOnContentScrollEnabled(true);
     }
 
     private SimpleTarget target = new SimpleTarget<Bitmap>() {
@@ -311,9 +216,15 @@ public class DetailActivityFragment extends Fragment {
             ImageView iv = (ImageView) getActivity().findViewById(R.id.expandedImage);
             CollapsingToolbarLayout ctl = (CollapsingToolbarLayout) getActivity()
                     .findViewById(R.id.collapsing_toolbar);
-            
-            ctl.setBackground(new ColorDrawable(c));
+
+            ctl.setContentScrim(new ColorDrawable(c));
             iv.setImageBitmap(resource);
+
+            if(share != null && addFav != null){
+                share.setBackground(new ColorDrawable(c));
+                addFav.setBackground(new ColorDrawable(c));
+            }
+
         }
     };
 }

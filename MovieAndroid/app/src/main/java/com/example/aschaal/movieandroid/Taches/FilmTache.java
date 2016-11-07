@@ -70,9 +70,9 @@ public class FilmTache extends AsyncTask<String, Void, List<Film>> {
             final String LANGUAGE_PARAM = "language";
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                    .appendQueryParameter(SORT_BY_PARAM, params[0])
-                    .appendQueryParameter(LANGUAGE_PARAM, "fr")
+                    .appendQueryParameter(LANGUAGE_PARAM, "fr-FR")
                     .appendQueryParameter(API_KEY_PARAM, fragment.getString(R.string.tmdb_api_key))
+                    .appendQueryParameter(SORT_BY_PARAM, params[0])
                     .build();
 
             URL url = new URL(builtUri.toString());

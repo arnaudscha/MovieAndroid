@@ -19,26 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
+import android.widget.ScrollView;
 
 import com.example.aschaal.movieandroid.Adapter.FilmAdapter;
-import com.example.aschaal.movieandroid.Datas.Contrat;
 import com.example.aschaal.movieandroid.Models.Film;
 import com.example.aschaal.movieandroid.Taches.FilmFavoriTask;
 import com.example.aschaal.movieandroid.Taches.FilmTache;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -66,13 +54,12 @@ public class MainActivityFragment extends Fragment {
      * selections.
      */
     public interface Callback {
-        void onItemSelected(Film movie);
+        void onItemSelected(Film movie, View transitedView);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
 
@@ -151,7 +138,11 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Film movie = filmAdapter.getItem(position);
-                ((Callback) getActivity()).onItemSelected(movie);
+                View tv = null;
+                if(view != null){
+                    tv = view.findViewById(R.id.grid_item_image);
+                }
+                ((Callback) getActivity()).onItemSelected(movie, tv);
             }
         });
 

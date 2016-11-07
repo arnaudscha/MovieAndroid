@@ -14,7 +14,8 @@
 
         <item name="actionMenuTextColor">@color/White</item>
         <item name="android:textColorSecondary">@color/White</item>
-
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowActivityTransitions">true</item>
 
     </style>
 

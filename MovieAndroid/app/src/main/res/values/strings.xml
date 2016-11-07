@@ -11,7 +11,7 @@
     <string name="reviews">Critiques</string>
     <string name="resume">Synopsis</string>
     <string name="action_favorite">Favoris</string>
-    <string name="content_authority">com.example.aschaal.movieandroid</string>
+    <string name="content_authority">.Datas.Fournisseur</string>
     <string name="removed_from_favorites">Supprimé des favoris</string>
     <string name="added_to_favorites">Ajouter aux favoris</string>
     <string name="action_sort_by_favorite">Favoris</string>

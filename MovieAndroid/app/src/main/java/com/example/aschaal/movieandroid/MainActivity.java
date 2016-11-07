@@ -2,8 +2,11 @@ package com.example.aschaal.movieandroid;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.example.aschaal.movieandroid.Models.Film;
 
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     }
 
     @Override
-    public void onItemSelected(Film movie) {
+    public void onItemSelected(Film movie, View transitedView) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE, movie);
@@ -53,7 +56,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra(DetailActivityFragment.DETAIL_MOVIE, movie);
-            startActivity(intent);
+
+            if(transitedView != null){
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(this, transitedView, "poster");
+                startActivity(intent, options.toBundle());
+            }
+            else{
+                startActivity(intent);
+            }
         }
     }
 }
